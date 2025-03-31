@@ -52,6 +52,13 @@
 	--ghibli-dark-blue: oklch(0.6 0.12 235);
 	--ghibli-text: oklch(0.4 0.02 260);
 
+	/* Filter button colors - improved contrast */
+	--filter-blue: oklch(0.65 0.12 235); /* Darker blue for better readability */
+	--filter-blue-text: white; /* White text on blue background */
+	--filter-brown: oklch(0.5 0.08 80); /* Darker brown for better readability */
+	--filter-brown-text: white; /* White text on brown background */
+	--filter-bg-hover: oklch(0.88 0.06 85); /* Slightly darker tan for hover state */
+
 	/* Original theme variables */
 	--radius: 0.625rem;
 	--background: var(--ghibli-cream);
@@ -170,5 +177,19 @@
 
 	.ghibli-gradient {
 		@apply bg-gradient-to-b from-[--ghibli-cream] to-[--ghibli-tan];
+	}
+
+	/* Filter button styles with improved contrast */
+	.filter-button {
+		@apply px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200
+		   bg-white text-[--ghibli-text] hover:bg-[--filter-bg-hover];
+	}
+
+	.filter-button-blue-active {
+		@apply bg-[--filter-blue] text-[--filter-blue-text] font-semibold shadow-md;
+	}
+
+	.filter-button-brown-active {
+		@apply bg-[--filter-brown] text-[--filter-brown-text] font-semibold shadow-md;
 	}
 }
