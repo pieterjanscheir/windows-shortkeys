@@ -1,13 +1,36 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
+	--font-sans: var(--font-sans);
 	--font-mono: var(--font-geist-mono);
+	--color-border: var(--border);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--font-heading: var(--font-sans);
 	--color-sidebar-ring: var(--sidebar-ring);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -21,80 +44,127 @@
 	--color-chart-3: var(--chart-3);
 	--color-chart-2: var(--chart-2);
 	--color-chart-1: var(--chart-1);
-	--color-ring: var(--ring);
-	--color-input: var(--input);
-	--color-border: var(--border);
-	--color-destructive: var(--destructive);
-	--color-accent-foreground: var(--accent-foreground);
-	--color-accent: var(--accent);
-	--color-muted-foreground: var(--muted-foreground);
-	--color-muted: var(--muted);
-	--color-secondary-foreground: var(--secondary-foreground);
-	--color-secondary: var(--secondary);
-	--color-primary-foreground: var(--primary-foreground);
-	--color-primary: var(--primary);
-	--color-popover-foreground: var(--popover-foreground);
-	--color-popover: var(--popover);
-	--color-card-foreground: var(--card-foreground);
-	--color-card: var(--card);
-	--radius-sm: calc(var(--radius) - 4px);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-lg: var(--radius);
-	--radius-xl: calc(var(--radius) + 4px);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * Design tokens — Linear / Slack / DevTools-inspired
+ * Restrained palette, hairline borders, single accent, no heavy shadows.
+ * Keeps a hint of warmth so it isn't purely cold.
+ */
 :root {
-	/* Ghibli-inspired colors */
-	--ghibli-cream: oklch(0.98 0.03 90);
-	--ghibli-tan: oklch(0.92 0.05 85);
-	--ghibli-brown: oklch(0.55 0.07 80);
-	--ghibli-blue: oklch(0.75 0.1 230);
-	--ghibli-dark-blue: oklch(0.6 0.12 235);
-	--ghibli-text: oklch(0.4 0.02 260);
+	/* Surfaces — slight warm undertone */
+	--surface-0: oklch(0.985 0.003 80); /* page canvas */
+	--surface-1: oklch(1 0 0); /* cards */
+	--surface-2: oklch(0.965 0.005 80); /* hover / chip bg */
+	--surface-3: oklch(0.94 0.006 80); /* pressed */
 
-	/* Filter button colors - improved contrast */
-	--filter-blue: oklch(0.65 0.12 235); /* Darker blue for better readability */
-	--filter-blue-text: white; /* White text on blue background */
-	--filter-brown: oklch(0.5 0.08 80); /* Darker brown for better readability */
-	--filter-brown-text: white; /* White text on brown background */
-	--filter-bg-hover: oklch(0.88 0.06 85); /* Slightly darker tan for hover state */
+	--border-soft: oklch(0.91 0.007 80);
+	--border-strong: oklch(0.82 0.01 80);
 
-	/* Original theme variables */
+	/* Text scale */
+	--text-strong: oklch(0.24 0.014 255);
+	--text: oklch(0.35 0.012 255);
+	--text-muted: oklch(0.52 0.012 255);
+	--text-subtle: oklch(0.65 0.012 255);
+
+	/* Accent (indigo-blue) */
+	--accent: oklch(0.97 0 0);
+	--accent-strong: oklch(0.42 0.2 265);
+	--accent-bg: oklch(0.95 0.04 265);
+	--accent-fg-on-bg: oklch(0.4 0.18 265);
+	--accent-ring: oklch(0.5 0.18 265 / 30%);
+
+	/* Warm secondary (amber/brown) — used for category chips */
+	--warm: oklch(0.55 0.075 70);
+	--warm-bg: oklch(0.95 0.04 80);
+	--warm-fg-on-bg: oklch(0.42 0.08 75);
+
+	/* Legacy ghibli aliases — kept so existing components don't break.
+	   Point at the new tokens so the whole site re-themes uniformly. */
+	--ghibli-cream: var(--surface-0);
+	--ghibli-tan: var(--border-soft);
+	--ghibli-brown: var(--text-strong);
+	--ghibli-blue: var(--accent);
+	--ghibli-dark-blue: var(--accent-strong);
+	--ghibli-text: var(--text);
+	--filter-blue: var(--accent);
+	--filter-blue-text: white;
+	--filter-brown: var(--warm);
+	--filter-brown-text: white;
+	--filter-bg-hover: var(--surface-2);
+
 	--radius: 0.625rem;
-	--background: var(--ghibli-cream);
-	--foreground: var(--ghibli-text);
 	--card: oklch(1 0 0);
-	--card-foreground: var(--ghibli-text);
+	--card-foreground: oklch(0.145 0 0);
 	--popover: oklch(1 0 0);
-	--popover-foreground: var(--ghibli-text);
-	--primary: var(--ghibli-brown);
-	--primary-foreground: var(--ghibli-cream);
-	--secondary: var(--ghibli-tan);
-	--secondary-foreground: var(--ghibli-brown);
+	--popover-foreground: oklch(0.145 0 0);
+	--primary: oklch(0.205 0 0);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
 	--muted: oklch(0.97 0 0);
 	--muted-foreground: oklch(0.556 0 0);
-	--accent: var(--ghibli-blue);
 	--accent-foreground: oklch(0.205 0 0);
 	--destructive: oklch(0.577 0.245 27.325);
-	--border: var(--ghibli-tan);
-	--input: var(--ghibli-tan);
-	--ring: var(--ghibli-blue);
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
-	--sidebar: var(--ghibli-cream);
-	--sidebar-foreground: var(--ghibli-text);
-	--sidebar-primary: var(--ghibli-brown);
-	--sidebar-primary-foreground: var(--ghibli-cream);
-	--sidebar-accent: var(--ghibli-tan);
-	--sidebar-accent-foreground: var(--ghibli-brown);
-	--sidebar-border: var(--ghibli-tan);
-	--sidebar-ring: var(--ghibli-blue);
+	--border: oklch(0.922 0 0);
+	--input: oklch(0.922 0 0);
+	--ring: oklch(0.708 0 0);
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0 0);
+	--chart-1: oklch(0.87 0 0);
+	--chart-2: oklch(0.556 0 0);
+	--chart-3: oklch(0.439 0 0);
+	--chart-4: oklch(0.371 0 0);
+	--chart-5: oklch(0.269 0 0);
+	--sidebar: oklch(0.985 0 0);
+	--sidebar-foreground: oklch(0.145 0 0);
+	--sidebar-primary: oklch(0.205 0 0);
+	--sidebar-primary-foreground: oklch(0.985 0 0);
+	--sidebar-accent: oklch(0.97 0 0);
+	--sidebar-accent-foreground: oklch(0.205 0 0);
+	--sidebar-border: oklch(0.922 0 0);
+	--sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
+	--surface-0: oklch(0.165 0.008 250);
+	--surface-1: oklch(0.205 0.009 250);
+	--surface-2: oklch(0.245 0.01 250);
+	--surface-3: oklch(0.29 0.012 250);
+
+	--border-soft: oklch(0.3 0.012 250);
+	--border-strong: oklch(0.4 0.014 250);
+
+	--text-strong: oklch(0.96 0.005 250);
+	--text: oklch(0.88 0.008 250);
+	--text-muted: oklch(0.68 0.012 250);
+	--text-subtle: oklch(0.55 0.012 250);
+
+	--accent: oklch(0.269 0 0);
+	--accent-strong: oklch(0.78 0.16 265);
+	--accent-bg: oklch(0.3 0.08 265);
+	--accent-fg-on-bg: oklch(0.85 0.12 265);
+	--accent-ring: oklch(0.72 0.16 265 / 40%);
+
+	--warm: oklch(0.7 0.08 75);
+	--warm-bg: oklch(0.3 0.04 75);
+	--warm-fg-on-bg: oklch(0.85 0.07 75);
+
+	--ghibli-cream: var(--surface-0);
+	--ghibli-tan: var(--border-soft);
+	--ghibli-brown: var(--text-strong);
+	--ghibli-blue: var(--accent);
+	--ghibli-dark-blue: var(--accent-strong);
+	--ghibli-text: var(--text);
+	--filter-blue: var(--accent);
+	--filter-blue-text: oklch(0.15 0.008 250);
+	--filter-brown: var(--warm);
+	--filter-brown-text: oklch(0.15 0.008 250);
+	--filter-bg-hover: var(--surface-2);
+
 	--background: oklch(0.145 0 0);
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.205 0 0);
@@ -107,17 +177,16 @@
 	--secondary-foreground: oklch(0.985 0 0);
 	--muted: oklch(0.269 0 0);
 	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
 	--accent-foreground: oklch(0.985 0 0);
 	--destructive: oklch(0.704 0.191 22.216);
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
 	--ring: oklch(0.556 0 0);
-	--chart-1: oklch(0.488 0.243 264.376);
-	--chart-2: oklch(0.696 0.17 162.48);
-	--chart-3: oklch(0.769 0.188 70.08);
-	--chart-4: oklch(0.627 0.265 303.9);
-	--chart-5: oklch(0.645 0.246 16.439);
+	--chart-1: oklch(0.87 0 0);
+	--chart-2: oklch(0.556 0 0);
+	--chart-3: oklch(0.439 0 0);
+	--chart-4: oklch(0.371 0 0);
+	--chart-5: oklch(0.269 0 0);
 	--sidebar: oklch(0.205 0 0);
 	--sidebar-foreground: oklch(0.985 0 0);
 	--sidebar-primary: oklch(0.488 0.243 264.376);
@@ -129,67 +198,140 @@
 }
 
 @layer base {
-	* {
-		@apply border-border outline-ring/50;
+	html {
+		color-scheme: light;
+    @apply font-sans;
+	}
+	html.dark {
+		color-scheme: dark;
 	}
 	body {
-		@apply bg-background text-foreground;
+		background-color: var(--surface-0);
+		color: var(--text);
 		font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv02', 'cv03';
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+    @apply bg-background text-foreground;
+	}
+	/* Subtle accent ring on keyboard focus, app-wide */
+	:focus-visible {
+		outline: 2px solid var(--accent-ring);
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+  * {
+    @apply border-border outline-ring/50;
+	}
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
 	}
 }
 
-/* Animation for floating elements */
-@keyframes floatAnimation {
-	0% {
-		transform: translateY(0px);
-	}
-	50% {
-		transform: translateY(-10px);
-	}
-	100% {
-		transform: translateY(0px);
-	}
-}
-
-.float {
-	animation: floatAnimation 5s ease-in-out infinite;
-}
-
-/* Ghibli-inspired custom utilities */
 @layer utilities {
-	.ghibli-card {
-		@apply bg-white rounded-xl shadow-sm border border-[--ghibli-tan] 
-           hover:border-[--ghibli-blue] transition-all duration-300 
-           hover:shadow-lg hover:transform hover:scale-[1.02];
-	}
-
-	.ghibli-icon-container {
-		@apply p-3 rounded-full bg-[--ghibli-tan] mb-4 
-           group-hover:bg-[--ghibli-blue]/20 transition-colors duration-300;
-	}
-
-	.ghibli-icon {
-		@apply text-[--ghibli-text] group-hover:text-[--ghibli-dark-blue] 
-           transition-colors duration-300;
-	}
-
+	/* Legacy gradient utility — now a no-op so existing wrappers don't paint
+	   a short, ugly band when content is short. Body bg does the canvas. */
 	.ghibli-gradient {
-		@apply bg-gradient-to-b from-[--ghibli-cream] to-[--ghibli-tan];
+		background: transparent;
 	}
 
-	/* Filter button styles with improved contrast */
+	/*
+	 * Filter chip — restrained Linear-style pill.
+	 * Default: transparent, hairline border, muted text.
+	 * Hover:   subtle surface lift.
+	 * Active:  accent-tinted bg + accent text + accent border. No shadow.
+	 */
 	.filter-button {
-		@apply px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200
-		   bg-white text-[--ghibli-text] hover:bg-[--filter-bg-hover];
+		display: inline-flex;
+		align-items: center;
+		padding: 0.5rem 0.875rem;
+		border-radius: 9999px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		background-color: transparent;
+		color: var(--text-muted);
+		border: 1px solid var(--border-soft);
+		transition:
+			background-color 150ms ease,
+			color 150ms ease,
+			border-color 150ms ease;
+		cursor: pointer;
+		user-select: none;
+	}
+	.filter-button:hover {
+		background-color: var(--surface-2);
+		color: var(--text-strong);
+		border-color: var(--border-strong);
+	}
+	.filter-button-blue-active,
+	.filter-button-blue-active:hover {
+		background-color: var(--accent-bg);
+		color: var(--accent-fg-on-bg);
+		border-color: var(--accent);
+	}
+	.filter-button-brown-active,
+	.filter-button-brown-active:hover {
+		background-color: var(--warm-bg);
+		color: var(--warm-fg-on-bg);
+		border-color: var(--warm);
 	}
 
-	.filter-button-blue-active {
-		@apply bg-[--filter-blue] text-[--filter-blue-text] font-semibold shadow-md;
+	/* Primary button — proper contrast in both themes */
+	.btn-primary {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.625rem 1.125rem;
+		border-radius: 9999px;
+		font-weight: 500;
+		font-size: 0.875rem;
+		background-color: var(--accent);
+		color: var(--primary-foreground);
+		border: 1px solid var(--accent);
+		transition: background-color 150ms ease, border-color 150ms ease;
+	}
+	.btn-primary:hover {
+		background-color: var(--accent-strong);
+		border-color: var(--accent-strong);
 	}
 
-	.filter-button-brown-active {
-		@apply bg-[--filter-brown] text-[--filter-brown-text] font-semibold shadow-md;
+	.btn-ghost {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 1rem;
+		border-radius: 9999px;
+		font-weight: 500;
+		font-size: 0.875rem;
+		background-color: transparent;
+		color: var(--text-strong);
+		border: 1px solid var(--border-soft);
+		transition: background-color 150ms ease, border-color 150ms ease;
+	}
+	.btn-ghost:hover {
+		background-color: var(--surface-2);
+		border-color: var(--border-strong);
+	}
+}
+
+/* OS-mode strictness — driven by [data-os] on <html> */
+[data-os='windows'] .os-only-mac {
+	display: none !important;
+}
+[data-os='mac'] .os-only-windows {
+	display: none !important;
+}
+
+/* Hide horizontal-scroll scrollbar on filter chips */
+.shortkey-explorer .overflow-x-auto {
+	scrollbar-width: none;
+}
+.shortkey-explorer .overflow-x-auto::-webkit-scrollbar {
+	display: none;
+}
+
+/* Comfortable touch targets on mobile */
+@media (max-width: 640px) {
+	.filter-button {
+		min-height: 40px;
 	}
 }
