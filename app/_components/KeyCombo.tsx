@@ -8,10 +8,10 @@ interface KeyComboProps {
 type Size = 'sm' | 'md' | 'lg'
 
 /**
- * Mac modifier glyphs map to short text labels. The chip renders only the
- * label so Mac chips look visually consistent with Windows chips
- * (Ctrl, Shift, Alt). The Win key is the one branded modifier that keeps
- * a small SVG glyph for OS identity.
+ * Mac modifier glyphs map to short text labels. Compact sizes (sm, md) render
+ * the label only so Mac chips line up visually with Windows chips. The large
+ * size used on detail pages also renders the Apple-style glyph alongside the
+ * label so users see exactly which key to press.
  */
 const MAC_MODIFIERS: Record<string, string> = {
 	'⌘': 'Cmd',
@@ -25,7 +25,7 @@ const MAC_MODIFIERS: Record<string, string> = {
 function PartContent({ part, size }: { part: string; size: Size }) {
 	const trimmed = part.trim()
 
-	// Windows key: keep the brand SVG + "Win" label
+	// Windows key: brand SVG + "Win" label (all sizes).
 	const isWinKey = /^(⊞(\s*win)?|win|windows)$/i.test(trimmed) || /^⊞\s*\S+/.test(trimmed)
 	if (isWinKey) {
 		const iconSize = size === 'sm' ? 'w-3 h-3' : size === 'lg' ? 'w-4 h-4' : 'w-3.5 h-3.5'
@@ -37,8 +37,21 @@ function PartContent({ part, size }: { part: string; size: Size }) {
 		)
 	}
 
-	// Mac modifier glyph: render the short label only
+	// Mac modifier: glyph + label on lg (detail pages), label only otherwise.
 	if (MAC_MODIFIERS[trimmed]) {
+		if (size === 'lg') {
+			return (
+				<span className='inline-flex items-center gap-1.5 leading-none'>
+					<span
+						aria-hidden='true'
+						className='text-lg leading-none translate-y-px font-medium'
+					>
+						{trimmed}
+					</span>
+					<span>{MAC_MODIFIERS[trimmed]}</span>
+				</span>
+			)
+		}
 		return <>{MAC_MODIFIERS[trimmed]}</>
 	}
 

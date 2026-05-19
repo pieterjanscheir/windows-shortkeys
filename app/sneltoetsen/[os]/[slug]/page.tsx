@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Info } from 'lucide-react'
 import {
 	categoryLabels,
 	categorySlugs,
@@ -34,11 +35,16 @@ function parseOs(value: string): OS | null {
 	return (ALLOWED_OS as string[]).includes(value) ? (value as OS) : null
 }
 
+/**
+ * Emit detail pages for both OS variants of every shortkey, including
+ * the Mac variant for shortkeys without a native Mac combo so the user
+ * still lands on a real page (with tools / alternatives) instead of a 404.
+ */
 export function generateStaticParams(): Params[] {
 	const out: Params[] = []
 	for (const k of shortkeys) {
 		out.push({ os: 'windows', slug: k.slug })
-		if (k.mac) out.push({ os: 'mac', slug: k.slug })
+		out.push({ os: 'mac', slug: k.slug })
 	}
 	return out
 }
@@ -52,27 +58,39 @@ export async function generateMetadata({
 	const os = parseOs(rawOs)
 	const k = findShortkeyBySlug(slug)
 	if (!os || !k) return { title: 'Niet gevonden' }
-	if (os === 'mac' && !k.mac) return { title: 'Niet gevonden' }
 
-	const combo = os === 'windows' ? k.windows : (k.mac as string)
 	const osLabel = os === 'windows' ? 'Microsoft Windows' : 'macOS'
-	const title = `${combo} · ${k.description} (${osLabel})`
 	const explanationText =
 		os === 'windows' ? k.windowsExplanation ?? k.explanation : k.macExplanation ?? k.explanation
-	const description = `${k.description} op ${osLabel}: druk ${combo}. ${explanationText}`.slice(0, 158)
-
 	const canonical = `/sneltoetsen/${os}/${slug}`
-	const otherOs: OS = os === 'windows' ? 'mac' : 'windows'
-	const otherCanonical = `/sneltoetsen/${otherOs}/${slug}`
-	const otherExists = otherOs === 'windows' || k.mac !== null
 
-	const keywords = [
-		`${combo} ${osLabel}`,
-		`${combo} sneltoets`,
-		`${k.description} sneltoets`,
-		`${k.description} ${osLabel}`,
-		`${osLabel} sneltoets ${k.description.toLowerCase()}`,
-	]
+	let title: string
+	let description: string
+	const keywords: string[] = []
+
+	if (os === 'mac' && !k.mac) {
+		title = `${k.description}: geen Mac-sneltoets (${osLabel})`
+		description =
+			`Voor "${k.description}" bestaat er geen ingebouwde macOS-sneltoets. ` +
+			`Bekijk welke apps hetzelfde resultaat bieden${(k.tools ?? []).length > 0 ? ` (${(k.tools ?? []).map((t) => t.name).join(', ')})` : ''}.`.slice(0, 158)
+		keywords.push(
+			`${k.description} Mac`,
+			`${k.description} macOS sneltoets`,
+			`Mac alternatief ${k.description.toLowerCase()}`,
+			`Raycast ${k.description.toLowerCase()}`,
+		)
+	} else {
+		const combo = os === 'windows' ? k.windows : (k.mac as string)
+		title = `${combo} · ${k.description} (${osLabel})`
+		description = `${k.description} op ${osLabel}: druk ${combo}. ${explanationText}`.slice(0, 158)
+		keywords.push(
+			`${combo} ${osLabel}`,
+			`${combo} sneltoets`,
+			`${k.description} sneltoets`,
+			`${k.description} ${osLabel}`,
+			`${osLabel} sneltoets ${k.description.toLowerCase()}`,
+		)
+	}
 
 	return {
 		title,
@@ -81,7 +99,6 @@ export async function generateMetadata({
 		alternates: {
 			canonical,
 			languages: { 'nl-BE': canonical, 'nl-NL': canonical },
-			...(otherExists ? { types: { 'text/html': otherCanonical } } : {}),
 		},
 		openGraph: { type: 'article', title, description, url: canonical, locale: 'nl_BE' },
 		twitter: { card: 'summary', title, description },
@@ -99,9 +116,9 @@ export default async function ShortkeyOsDetailPage({
 	const os = parseOs(rawOs)
 	const k = findShortkeyBySlug(slug)
 	if (!os || !k) notFound()
-	if (os === 'mac' && !k.mac) notFound()
 
-	const combo = (os === 'windows' ? k.windows : k.mac) as string
+	const hasCombo = os === 'windows' || k.mac !== null
+	const combo = os === 'windows' ? k.windows : k.mac
 	const explanation =
 		os === 'windows'
 			? k.windowsExplanation ?? k.explanation
@@ -110,9 +127,7 @@ export default async function ShortkeyOsDetailPage({
 	const otherOs: OS = os === 'windows' ? 'mac' : 'windows'
 	const otherAvailable = otherOs === 'windows' || k.mac !== null
 
-	const related = relatedShortkeys(k.slug, 6).filter((rk) =>
-		otherOs === 'windows' ? true : rk.mac !== null,
-	)
+	const related = relatedShortkeys(k.slug, 6)
 
 	const breadcrumbJsonLd = {
 		'@context': 'https://schema.org',
@@ -134,19 +149,21 @@ export default async function ShortkeyOsDetailPage({
 		],
 	}
 
-	const howToJsonLd = {
-		'@context': 'https://schema.org',
-		'@type': 'HowTo',
-		name: `${k.description} (${osLabel}) met de sneltoets ${combo}`,
-		description: explanation,
-		step: [
-			{
-				'@type': 'HowToStep',
-				name: osLabel,
-				text: `Druk op ${combo} om ${k.description.toLowerCase()}.`,
-			},
-		],
-	}
+	const howToJsonLd = hasCombo
+		? {
+				'@context': 'https://schema.org',
+				'@type': 'HowTo',
+				name: `${k.description} (${osLabel}) met de sneltoets ${combo}`,
+				description: explanation,
+				step: [
+					{
+						'@type': 'HowToStep',
+						name: osLabel,
+						text: `Druk op ${combo} om ${k.description.toLowerCase()}.`,
+					},
+				],
+			}
+		: null
 
 	return (
 		<>
@@ -154,10 +171,12 @@ export default async function ShortkeyOsDetailPage({
 				type='application/ld+json'
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
 			/>
-			<script
-				type='application/ld+json'
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
-			/>
+			{howToJsonLd && (
+				<script
+					type='application/ld+json'
+					dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+				/>
+			)}
 
 			<div className='max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12'>
 				<Breadcrumb className='mb-6'>
@@ -185,7 +204,7 @@ export default async function ShortkeyOsDetailPage({
 				<article className='bg-card text-card-foreground rounded-2xl border border-border p-6 sm:p-10'>
 					<header className='flex items-start gap-4 mb-8 pb-6 border-b border-border'>
 						<k.Icon className='w-6 h-6 mt-1 text-muted-foreground shrink-0' aria-hidden='true' />
-						<div className='flex-1'>
+						<div className='flex-1 min-w-0'>
 							<div className='text-[11px] uppercase tracking-[0.08em] font-semibold text-primary mb-1'>
 								{osLabel}
 							</div>
@@ -205,16 +224,38 @@ export default async function ShortkeyOsDetailPage({
 								</Badge>
 							</div>
 						</div>
+						{hasCombo && (
+							<div className='shrink-0'>
+								<CopyButton
+									value={combo as string}
+									label='Kopieer deze sneltoets'
+									variant='full'
+								/>
+							</div>
+						)}
 					</header>
 
 					<section>
 						<div className='mb-4 text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground'>
 							Sneltoets
 						</div>
-						<KeyCombo combination={combo} size='lg' />
-						<div className='mt-3'>
-							<CopyButton value={combo} label={`Kopieer ${osLabel}-sneltoets`} className='-ml-1.5' />
-						</div>
+
+						{hasCombo ? (
+							<KeyCombo combination={combo as string} size='lg' />
+						) : (
+							<div className='flex flex-col gap-3 items-start rounded-lg border border-dashed border-border bg-muted/40 px-5 py-4'>
+								<Badge variant='outline' className='inline-flex items-center gap-1.5'>
+									<Info className='w-3 h-3' aria-hidden='true' />
+									Geen ingebouwde sneltoets op macOS
+								</Badge>
+								<p className='text-sm text-muted-foreground'>
+									macOS heeft hier geen standaardcombinatie voor.{' '}
+									{k.tools && k.tools.length > 0
+										? 'Een van de apps hieronder vult dat gat.'
+										: 'Bekijk de Microsoft Windows-variant of stel zelf een combinatie in via Toetsenbordinstellingen.'}
+								</p>
+							</div>
+						)}
 
 						<div className='mt-8 space-y-4'>
 							<h2 className='text-base font-semibold text-foreground tracking-tight'>
@@ -271,7 +312,9 @@ export default async function ShortkeyOsDetailPage({
 								className='inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors'
 							>
 								<span>
-									Bekijk dezelfde functie op {otherOs === 'windows' ? 'Microsoft Windows' : 'macOS'}
+									{!hasCombo
+										? 'Bekijk de Microsoft Windows-versie van deze functie'
+										: `Bekijk dezelfde functie op ${otherOs === 'windows' ? 'Microsoft Windows' : 'macOS'}`}
 								</span>
 								<span aria-hidden='true'>→</span>
 							</Link>

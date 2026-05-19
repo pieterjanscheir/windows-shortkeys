@@ -84,7 +84,7 @@ export function ShortkeyCard({ shortkey, headingLevel = 3, linkToDetail = true }
 						</Badge>
 						<Heading className='text-[15px] font-semibold text-foreground leading-snug tracking-tight'>
 							{linkToDetail ? (
-								<Link href={winHref} className='hover:text-primary transition-colors'>
+								<Link href={macHref} className='hover:text-primary transition-colors'>
 									{shortkey.description}
 								</Link>
 							) : (
@@ -122,7 +122,7 @@ export function ShortkeyCard({ shortkey, headingLevel = 3, linkToDetail = true }
 							Details →
 						</Link>
 						<Link
-							href={shortkey.mac ? macHref : winHref}
+							href={macHref}
 							className='os-only-mac font-medium text-muted-foreground hover:text-primary transition-colors'
 						>
 							Details →

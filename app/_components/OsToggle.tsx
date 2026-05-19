@@ -1,6 +1,8 @@
 'use client'
 
+import { usePathname, useRouter } from 'next/navigation'
 import { useOs } from './OsContext'
+import type { OS } from '@/lib/shortkeys'
 import { cn } from '@/lib/utils'
 
 export function WindowsMark({ className }: { className?: string }) {
@@ -32,6 +34,18 @@ export function AppleMark({ className }: { className?: string }) {
  */
 export function OsToggle() {
 	const { os, setOs } = useOs()
+	const pathname = usePathname()
+	const router = useRouter()
+
+	const handleSelect = (next: OS) => {
+		setOs(next)
+		// On a detail page like /sneltoetsen/{os}/{slug}, switch the URL to the
+		// other OS variant so the user lands on the equivalent page directly.
+		const match = pathname?.match(/^\/sneltoetsen\/(windows|mac)\/(.+)$/)
+		if (match) {
+			router.push(`/sneltoetsen/${next}/${match[2]}`)
+		}
+	}
 
 	const segment = (active: boolean) =>
 		cn(
@@ -50,7 +64,7 @@ export function OsToggle() {
 		>
 			<button
 				type='button'
-				onClick={() => setOs('windows')}
+				onClick={() => handleSelect('windows')}
 				aria-pressed={os === 'windows'}
 				className={segment(os === 'windows')}
 			>
@@ -59,7 +73,7 @@ export function OsToggle() {
 			</button>
 			<button
 				type='button'
-				onClick={() => setOs('mac')}
+				onClick={() => handleSelect('mac')}
 				aria-pressed={os === 'mac'}
 				className={segment(os === 'mac')}
 			>

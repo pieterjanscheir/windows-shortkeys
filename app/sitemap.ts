@@ -45,14 +45,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			changeFrequency: 'monthly',
 			priority: 0.6,
 		})
-		if (k.mac) {
-			entries.push({
-				url: `${siteUrl}/sneltoetsen/mac/${k.slug}`,
-				lastModified: now,
-				changeFrequency: 'monthly',
-				priority: 0.6,
-			})
-		}
+		// Always emit the Mac variant. When the shortkey has no native Mac
+		// equivalent, the page still serves a useful "alternative apps" view.
+		entries.push({
+			url: `${siteUrl}/sneltoetsen/mac/${k.slug}`,
+			lastModified: now,
+			changeFrequency: 'monthly',
+			priority: k.mac ? 0.6 : 0.4,
+		})
 	}
 
 	return entries
