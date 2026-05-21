@@ -2,7 +2,7 @@
 
 Dé Nederlandstalige gids met sneltoetsen voor **Microsoft Windows** én **macOS**. Wissel met één klik tussen besturingssystemen en doorzoek toetsencombinaties voor vensters, Snap Layouts, Widgets, virtuele bureaubladen, schermafdrukken en meer.
 
-Live: [windows-sneltoetsen.vercel.app](https://windows-sneltoetsen.vercel.app)
+Live: [shortkeys.scheir.eu](https://shortkeys.scheir.eu)
 
 ## Features
 
@@ -62,7 +62,7 @@ De volledige set sneltoetsen, categorieën, niveaus en bijbehorende slugs staat 
 
 ## Omgevingsvariabelen
 
-- `NEXT_PUBLIC_SITE_URL` — canonieke URL van de site (gebruikt voor metadata en JSON-LD). Standaard: `https://windows-sneltoetsen.vercel.app`.
+- `NEXT_PUBLIC_SITE_URL` — canonieke URL van de site (gebruikt voor metadata en JSON-LD). Standaard: `https://shortkeys.scheir.eu`.
 
 ## Deploy
 
