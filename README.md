@@ -66,7 +66,7 @@ De volledige set sneltoetsen, categorieën, niveaus en bijbehorende slugs staat 
 
 ## Deploy
 
-De site wordt gedeployd op [Vercel](https://vercel.com). Elke push naar `main` triggert een nieuwe deploy.
+De site wordt gedeployd op [Vercel](https://vercel.com). Elke push naar `master` triggert een nieuwe deploy.
 
 ## Auteur
 
