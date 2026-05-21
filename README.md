@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# shortkeys
 
-## Getting Started
+Dé Nederlandstalige gids met sneltoetsen voor **Microsoft Windows** én **macOS**. Wissel met één klik tussen besturingssystemen en doorzoek toetsencombinaties voor vensters, Snap Layouts, Widgets, virtuele bureaubladen, schermafdrukken en meer.
 
-First, run the development server:
+Live: [windows-sneltoetsen.vercel.app](https://windows-sneltoetsen.vercel.app)
+
+## Features
+
+- Doorzoekbare lijst met Windows- en macOS-sneltoetsen, gesorteerd op **categorie** en **niveau** (beginner → expert).
+- One-click OS-switcher: bekijk dezelfde sneltoets in zijn Windows- of Mac-variant.
+- Detailpagina's per sneltoets (`/sneltoetsen/[os]/[slug]`), per categorie (`/categorie/[category]`) en per niveau (`/niveau/[level]`).
+- "Tip van de dag" op de homepage, deterministisch gekozen op basis van de datum.
+- Donkere/lichte modus via `next-themes`.
+- SEO-vriendelijk: gestructureerde data (`ItemList`, `FAQPage`, `WebSite`), sitemap, robots en Open Graph metadata.
+- Toetsenbordtoegankelijke UI met componenten op basis van Radix / Base UI en shadcn.
+
+## Tech stack
+
+- [Next.js 16](https://nextjs.org) (App Router, Turbopack)
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- shadcn / Radix UI / Base UI componenten
+- `nuqs` voor URL-state, `cmdk` voor het zoekpaneel, `sonner` voor toasts
+
+## Aan de slag
+
+Installeer de dependencies en start de dev-server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in je browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `pnpm dev` — Next.js dev-server met Turbopack
+- `pnpm build` — productiebuild
+- `pnpm start` — productiebuild serveren
+- `pnpm lint` — ESLint
 
-## Learn More
+## Projectstructuur
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  _components/       UI-componenten (ShortkeyExplorer, OsToggle, ThemeToggle, ...)
+  categorie/         Per-categorie pagina's
+  niveau/            Per-niveau pagina's
+  sneltoetsen/       Detailpagina's per sneltoets en per OS
+  over/              "Over"-pagina
+  layout.tsx         Root layout, metadata en JSON-LD
+  page.tsx           Homepage
+components/ui/       shadcn-componenten
+lib/
+  shortkeys.ts       Bron van alle sneltoetsen, categorieën en niveaus
+  utils.ts           Hulpfuncties
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+De volledige set sneltoetsen, categorieën, niveaus en bijbehorende slugs staat in `lib/shortkeys.ts`. Voeg daar een nieuwe entry toe om een sneltoets aan de site toe te voegen.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Omgevingsvariabelen
 
-## Deploy on Vercel
+- `NEXT_PUBLIC_SITE_URL` — canonieke URL van de site (gebruikt voor metadata en JSON-LD). Standaard: `https://windows-sneltoetsen.vercel.app`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+De site wordt gedeployd op [Vercel](https://vercel.com). Elke push naar `main` triggert een nieuwe deploy.
+
+## Auteur
+
+Gemaakt door [Pieter-Jan Scheir](https://scheir.eu).
